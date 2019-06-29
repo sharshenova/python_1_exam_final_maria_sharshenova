@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'widget_tweaks',
     'webapp',
-    'accounts'
+    'accounts',
+    'crispy_forms'
 ]
 
 MIDDLEWARE = [
@@ -135,3 +136,5 @@ LOGOUT_REDIRECT_URL = 'webapp:author_list'
 MEDIA_URL = '/media/'
 
 MEDIA_ROOT = 'uploads'
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
