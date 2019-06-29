@@ -1,10 +1,12 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.views.generic import DetailView, UpdateView
-from webapp.forms import UserForm
+from django.views.generic import ListView, DetailView, UpdateView, CreateView, DeleteView
+from webapp.forms import UserForm, AuthorForm
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.contrib.auth.models import User
+from webapp.models import Author
+from django.urls import reverse_lazy
 
 
 class UserDetailView(DetailView):
@@ -31,3 +33,55 @@ class UserUpdateView(UpdateView, LoginRequiredMixin, PermissionRequiredMixin):
 
     def has_permission(self):
         return self.request.user == self.get_object().author
+
+
+class AuthorDetailView(DetailView):
+    template_name = 'author_details.html'
+    model = Author
+
+
+class AuthorListView(ListView):
+    template_name = 'author_list.html'
+    model = Author
+    queryset = Author.objects.filter(is_deleted=False)
+
+
+class AuthorCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    template_name = 'author_create.html'
+    form_class = AuthorForm
+    model = Author
+
+    def get_permission_required(self):
+        return None
+
+    def has_permission(self):
+        return self.request.user.is_staff
+
+
+class AuthorUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    template_name = 'author_update.html'
+    form_class = AuthorForm
+    model = Author
+
+    def get_permission_required(self):
+        return None
+
+    def has_permission(self):
+        return self.request.user.is_staff
+
+
+class AuthorDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    template_name = 'author_delete.html'
+    model = Author
+    success_url = reverse_lazy('webapp:author_list')
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        self.object.soft_delete()
+        return HttpResponseRedirect(self.get_success_url())
+
+    def get_permission_required(self):
+        return None
+
+    def has_permission(self):
+        return self.request.user.is_staff
