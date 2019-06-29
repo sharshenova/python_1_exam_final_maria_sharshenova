@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import Author, Book
+from .models import Author, Book, Review
 
 
 class UserForm(forms.ModelForm):
@@ -29,3 +29,9 @@ class BookForm(forms.ModelForm):
     class Meta:
         model = Book
         fields = ['title', 'author', 'published_at', 'file', 'image', 'description']
+
+
+class ReviewForm(forms.ModelForm):
+    class Meta:
+        model = Review
+        fields = ['text']

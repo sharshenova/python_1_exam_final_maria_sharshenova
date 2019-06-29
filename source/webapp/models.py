@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse
+from django.contrib.auth.models import User
 
 
 class Author(models.Model):
@@ -42,3 +43,20 @@ class Book(models.Model):
     class Meta:
         verbose_name = "Книга"
         verbose_name_plural = "Книги"
+
+
+class Review(models.Model):
+    text = models.TextField(max_length=3000, null=True, blank=True, verbose_name="Отзыв")
+    author = models.ForeignKey(User, verbose_name="Автор", on_delete=models.CASCADE)
+    book = models.ForeignKey(Book, related_name="reviews", blank=True, verbose_name="Книга", on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now=True, verbose_name="Дата-время создания")
+
+    def get_absolute_url(self):
+        return reverse('webapp:book_details', kwargs={'pk': self.book.id})
+
+    def __str__(self):
+        return f"{self.pk}. {self.text} | {self.author.username}"
+
+    class Meta:
+        verbose_name = "Отзыв"
+        verbose_name_plural = "Отзывы"

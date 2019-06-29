@@ -1,11 +1,11 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.views.generic import ListView, DetailView, UpdateView, CreateView, DeleteView
-from webapp.forms import UserForm, AuthorForm, BookForm
+from webapp.forms import UserForm, AuthorForm, BookForm, ReviewForm
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.contrib.auth.models import User
-from webapp.models import Author, Book
+from webapp.models import Author, Book, Review
 from django.urls import reverse_lazy
 
 
@@ -96,6 +96,11 @@ class BookDetailView(DetailView):
     template_name = 'book_details.html'
     model = Book
 
+    def get_context_data(self, **kwargs):
+        context = super(BookDetailView, self).get_context_data(**kwargs)
+        context['book_reviews'] = self.object.reviews.all().order_by('-created_at')
+        return context
+
 
 class BookListView(ListView):
     template_name = 'book_list.html'
@@ -136,3 +141,55 @@ class BookDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
 
     def has_permission(self):
         return self.request.user.is_staff
+
+
+class ReviewListView(ListView):
+    template_name = 'review_list.html'
+    model = Review
+
+
+class ReviewDetailView(DetailView):
+    template_name = 'review_detail.html'
+    model = Review
+
+
+class ReviewCreateView(CreateView, LoginRequiredMixin, PermissionRequiredMixin):
+    template_name = 'partial/review_form.html'
+    form_class = ReviewForm
+    model = Review
+
+    def get_permission_required(self):
+        return None
+
+    def has_permission(self):
+        return self.request.user.is_authenticated
+
+    def form_valid(self, form):
+        book = get_object_or_404(Book, pk=self.kwargs['pk'])
+        form.instance.book = book
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+
+class ReviewUpdateView(UpdateView, LoginRequiredMixin, PermissionRequiredMixin):
+    template_name = 'review_update.html'
+    form_class = ReviewForm
+    model = Review
+
+    def get_permission_required(self):
+        return None
+
+    def has_permission(self):
+        return self.request.user == self.get_object().author
+
+
+class ReviewDeleteView(DeleteView, LoginRequiredMixin, PermissionRequiredMixin):
+    template_name = 'review_delete.html'
+    model = Review
+    success_url = reverse_lazy('webapp:book_list')
+
+    def get_permission_required(self):
+        return None
+
+    def has_permission(self):
+        return self.request.user == self.get_object().author
