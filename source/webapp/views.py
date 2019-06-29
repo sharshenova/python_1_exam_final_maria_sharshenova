@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.contrib.auth.models import User
-from webapp.models import Author
+from webapp.models import Author, Book
 from django.urls import reverse_lazy
 
 
@@ -38,6 +38,11 @@ class UserUpdateView(UpdateView, LoginRequiredMixin, PermissionRequiredMixin):
 class AuthorDetailView(DetailView):
     template_name = 'author_details.html'
     model = Author
+
+    def get_context_data(self, **kwargs):
+        context = super(AuthorDetailView, self).get_context_data(**kwargs)
+        context['books_by_author'] = self.object.books.all()
+        return context
 
 
 class AuthorListView(ListView):
@@ -85,3 +90,13 @@ class AuthorDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
 
     def has_permission(self):
         return self.request.user.is_staff
+
+
+class BookDetailView(DetailView):
+    template_name = 'book_details.html'
+    model = Book
+
+
+class BookListView(ListView):
+    template_name = 'book_list.html'
+    model = Book
