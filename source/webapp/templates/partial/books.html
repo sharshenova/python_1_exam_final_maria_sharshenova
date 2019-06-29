@@ -1,21 +1,25 @@
-{% for book in book_list %}
-    <div class="card mt-3">
-        <div class="card-header">
-            <h1 class="card-title card-text"><a href="{% url 'webapp:book_details' book.pk %}" class="card-link">{{ book.title }}</a></h1>
-        </div>
-        {% if book.image %}
-            <div class="card-body">
-                <div class="img-wrapper">
-                    <img class="card-img w-50" src="{{ book.image.url }}" alt="{{ book.image.name }}">
+<div class="row">
+    {% for book in book_list %}
+        <div class="col col-6">
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h1 class="card-title card-text"><a href="{% url 'webapp:book_details' book.pk %}" class="card-link">{{ book.title }}</a></h1>
+                </div>
+                {% if book.image %}
+                    <div class="card-body">
+                        <div class="img-wrapper">
+                            <img class="card-img w-50" src="{{ book.image.url }}" alt="{{ book.image.name }}">
+                        </div>
+                    </div>
+                {% endif %}
+                <div class="card-footer">
+                    <p class="card-text">{{ book.author }} | {{ book.published_at }}
+                        {% if user.is_staff %}
+                            <a class="float-right" href="{% url 'webapp:book_delete' book.pk %}">Удалить</a>
+                            <a class="float-right mr-1" href="{% url 'webapp:book_update' book.pk %}">Редактировать |</a>
+                        {% endif %}</p>
                 </div>
             </div>
-        {% endif %}
-        <div class="card-footer">
-            <p class="card-text">{{ book.author }} | {{ book.published_at }}
-                {% if user.is_staff %}
-                    <a class="float-right" href="{% url 'webapp:book_delete' book.pk %}">Удалить</a>
-                    <a class="float-right mr-1" href="{% url 'webapp:book_update' book.pk %}">Редактировать |</a>
-                {% endif %}</p>
         </div>
-    </div>
-{% endfor %}
+    {% endfor %}
+</div>

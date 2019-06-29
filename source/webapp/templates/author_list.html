@@ -3,25 +3,29 @@
 {% block title %}Aвторы{% endblock %}
 
 {% block content %}
-    {% for author in author_list %}
-        <div class="card mt-3">
-            <div class="card-header">
-                <h1 class="card-title card-text"><a href="{% url 'webapp:author_details' author.pk %}" class="card-link">{{ author.name }}</a></h1>
-            </div>
-            {% if author.image %}
-                <div class="card-body">
-                    <div class="img-wrapper">
-                        <img class="card-img w-50" src="{{ author.image.url }}" alt="{{ author.image.name }}">
+    <div class="row">
+        {% for author in author_list %}
+            <div class="col col-6">
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h2 class="card-title card-text"><a href="{% url 'webapp:author_details' author.pk %}" class="card-link">{{ author.name }}</a></h2>
+                    </div>
+                    {% if author.image %}
+                        <div class="card-body">
+                            <div class="img-wrapper">
+                                <img class="card-img w-50" src="{{ author.image.url }}" alt="{{ author.image.name }}">
+                            </div>
+                        </div>
+                    {% endif %}
+                    <div class="card-footer">
+                        <p class="card-text">{{ author.birth_date }} - {{ author.death_date }}
+                            {% if user.is_staff %}
+                                <a class="float-right" href="{% url 'webapp:author_delete'  author.pk %}">Удалить</a>
+                                <a class="float-right mr-1" href="{% url 'webapp:author_update' author.pk %}">Редактировать |</a>
+                            {% endif %}</p>
                     </div>
                 </div>
-            {% endif %}
-            <div class="card-footer">
-                <p class="card-text">{{ author.birth_date }} - {{ author.death_date }}
-                    {% if user.is_staff %}
-                        <a class="float-right" href="{% url 'webapp:author_delete'  author.pk %}">Удалить</a>
-                        <a class="float-right mr-1" href="{% url 'webapp:author_update' author.pk %}">Редактировать |</a>
-                    {% endif %}</p>
             </div>
-        </div>
-    {% endfor %}
+        {% endfor %}
+    </div>
 {% endblock %}
