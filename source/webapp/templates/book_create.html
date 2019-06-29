@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Новая книга{% endblock %}
+
+{% block content %}
+    <h1 class="mt-3">Добавить книгу</h1>
+    <form method="post" enctype="multipart/form-data" action="{% url 'webapp:book_create' %}">
+        {% csrf_token %}
+        {{ form|crispy }}
+    <button type="submit" class="btn btn-primary mr-1">Отправить</button>
+    </form>
+{% endblock %}

@@ -5,10 +5,10 @@
 {% block content %}
     <h1 class="mt-2">{{ book.title }}</h1>
     <p class="text-secondary">{{ book.author }} | {{ book.published_at }}
-{#        {% if user.is_staff %}#}
-{#            <a class="float-right" href="{% url 'webapp:book_delete' book.pk %}">Удалить</a>#}
-{#            <a class="float-right mr-1" href="{% url 'webapp:book_update' book.pk %}">Редактировать |</a>#}
-{#        {% endif %}#}
+        {% if user.is_staff %}
+            <a class="float-right" href="{% url 'webapp:book_delete' book.pk %}">Удалить</a>
+            <a class="float-right mr-1" href="{% url 'webapp:book_update' book.pk %}">Редактировать |</a>
+        {% endif %}
     </p>
     {% if book.image %}
         <div class="img-wrapper">
